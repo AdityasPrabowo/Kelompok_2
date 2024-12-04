@@ -1,0 +1,87 @@
+import pickle
+
+FILENAME = "data.pkl"
+
+def load_data():
+    try:
+        with open(FILENAME, 'rb') as file:
+            users = pickle.load(file)
+    except (FileNotFoundError, EOFError):
+        users = {}
+    return users
+
+def save_data(users):
+    with open(FILENAME, 'wb') as file:
+        pickle.dump(users, file)
+
+def add_user(users, username, email):
+    if username in users:
+        raise ValueError(f"Username '{username}' telah digunakan.")
+    if "@" not in email:
+        raise ValueError(f"Email '{email}' tidak valid. Pastikan email mengandung '@'.")
+    users[username] = {'email': email, 'active': False}
+    save_data(users)
+    print(f"{username} berhasil ditambahkan.")
+
+def update_user_status(users, username, active):
+    if username not in users:
+        raise ValueError(f"Pengguna dengan username '{username}' tidak ditemukan.")
+    users[username]['active'] = active
+    save_data(users)
+    status = "Aktif" if active else "Nonaktif"
+    print(f"Akun {username} berhasil di{status.lower()}kan.")
+
+def find_user(users, username):
+    user = users.get(username)
+    if user is None:
+        raise ValueError(f"Pengguna dengan username '{username}' tidak ditemukan.")
+    status = "Aktif" if user['active'] else "Nonaktif"
+    print(f"Username: {username}, Email: {user['email']}, Status: {status}")
+    return user
+
+def list_users(users):
+    if not users:
+        print("Tidak ada username yang terdaftar.")
+        return
+    for username, data in users.items():
+        status = "Aktif" if data['active'] else "Nonaktif"
+        print(f"Username: {username}, Email: {data['email']}, Status: {status}")
+
+def menu():
+    
+    users = load_data()  
+    while True:
+        print("\n=== Menu Manajemen Pengguna ===")
+        print("1. Tambah pengguna")
+        print("2. Aktifkan atau Nonaktifkan pengguna")
+        print("3. Cari pengguna berdasarkan username")
+        print("4. Tampilkan semua pengguna terdaftar")
+        print("5. Keluar")
+        pilihan = input("Pilih menu (1-5): ")
+
+        try:
+            if pilihan == "1":
+                username = input("Masukkan username: ")
+                email = input("Masukkan email: ")
+                
+                add_user(users, username, email)  
+            elif pilihan == "2":
+                username = input("Masukkan username: ")
+                status = input("Aktifkan akun? (yes/not): ").lower() == "yes"
+                update_user_status(users, username, status)  
+            elif pilihan == "3":
+                username = input("Masukkan username: ")
+                find_user(users, username)  
+            elif pilihan == "4":
+                list_users(users) 
+            elif pilihan == "5":
+                print("Keluar program.")
+                break
+            else:
+                print("Pilihan tidak valid. Silakan memilih sesuai opsi yang tersedia.")
+
+        except ValueError as e:
+            print(f"Error: {e}")
+
+if __name__ == "__main__":
+    menu()
