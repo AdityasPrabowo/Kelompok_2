@@ -2,6 +2,26 @@ import pickle
 
 FILENAME = "data.pkl"
 
+class Pengguna:
+    def __init__(self, username: str, email: str):
+        self.username = username
+        self.email = email
+        self.status_aktif = False
+
+    def aktifkan_akun(self):
+        if not self.status_aktif:
+            self.status_aktif = True
+            print(f"Akun {self.username} telah diaktifkan.")
+        else:
+            raise ValueError(f"Akun {self.username} sudah aktif.")
+
+    def nonaktifkan_akun(self):
+        if self.status_aktif:
+            self.status_aktif = False
+            print(f"Akun {self.username} telah dinonaktifkan.")
+        else:
+            raise ValueError(f"Akun {self.username} sudah nonaktif.")
+
 def load_data():
     try:
         with open(FILENAME, 'rb') as file:
@@ -48,8 +68,8 @@ def list_users(users):
         print(f"Username: {username}, Email: {data['email']}, Status: {status}")
 
 def menu():
-    
-    users = load_data()  
+
+    users = load_data()
     while True:
         print("\n=== Menu Manajemen Pengguna ===")
         print("1. Tambah pengguna")
@@ -63,17 +83,17 @@ def menu():
             if pilihan == "1":
                 username = input("Masukkan username: ")
                 email = input("Masukkan email: ")
-                
-                add_user(users, username, email)  
+
+                add_user(users, username, email)
             elif pilihan == "2":
                 username = input("Masukkan username: ")
                 status = input("Aktifkan akun? (yes/not): ").lower() == "yes"
-                update_user_status(users, username, status)  
+                update_user_status(users, username, status)
             elif pilihan == "3":
                 username = input("Masukkan username: ")
-                find_user(users, username)  
+                find_user(users, username)
             elif pilihan == "4":
-                list_users(users) 
+                list_users(users)
             elif pilihan == "5":
                 print("Keluar program.")
                 break
